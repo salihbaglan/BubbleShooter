@@ -27,7 +27,7 @@ function drawBubble(context, x, y, color, r, alpha = 1) {
 
   // Shadow glow
   context.shadowColor = color;
-  context.shadowBlur = 10;
+  context.shadowBlur = 3;
 
   // Main circle
   const grad = context.createRadialGradient(x - r*0.3, y - r*0.35, r*0.05, x, y, r);
@@ -124,15 +124,32 @@ function drawPopAnims() {
       ctx.save();
       ctx.globalAlpha = p.alpha;
       ctx.strokeStyle = p.color;
-      ctx.lineWidth = 10 * p.alpha;
+      ctx.lineWidth = 6 * p.alpha;
       ctx.shadowColor = p.color;
-      ctx.shadowBlur = 20;
+      ctx.shadowBlur = 25;
       ctx.beginPath();
       ctx.arc(p.x, animY, R * p.scale, 0, Math.PI * 2);
       ctx.stroke();
+      if (p.alpha > 0.3) {
+        ctx.globalAlpha = p.alpha * 0.3;
+        ctx.lineWidth = 12 * p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, animY, R * p.scale * 0.7, 0, Math.PI * 2);
+        ctx.stroke();
+      }
       ctx.restore();
     } else {
-      drawBubble(ctx, p.x, animY, p.color, R * p.scale, p.alpha);
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      const grad = ctx.createRadialGradient(p.x, animY, 0, p.x, animY, R * p.scale);
+      grad.addColorStop(0, '#fff');
+      grad.addColorStop(0.3, p.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, animY, R * p.scale * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
   });
 }
@@ -241,12 +258,31 @@ function drawParticles() {
   particles.forEach(p => {
     ctx.save();
     ctx.globalAlpha = p.alpha;
-    ctx.fillStyle = p.color;
-    ctx.shadowColor = p.color;
-    ctx.shadowBlur = 6;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
+    if (p.type === 'sparkle') {
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = '#fff';
+      ctx.shadowBlur = 8;
+      const s = p.size;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(Date.now() * 0.005 + p.life);
+      ctx.fillRect(-s/2, -0.5, s, 1);
+      ctx.fillRect(-0.5, -s/2, 1, s);
+    } else if (p.type === 'smoke') {
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+      grad.addColorStop(0, 'rgba(80,80,80,0.3)');
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 4;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.restore();
   });
 }
@@ -254,27 +290,64 @@ function drawParticles() {
 function drawFloatTexts() {
   floatingTexts.forEach(t => {
     ctx.save();
+    const s = typeof t.scale === 'number' ? easeOutBack(Math.min(1, t.scale)) : 1;
     ctx.globalAlpha = t.alpha;
+    ctx.translate(t.x, t.y);
+    ctx.scale(s, s);
+    ctx.font = `bold 20px 'Fredoka One', cursive`;
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+    ctx.lineWidth = 3;
+    ctx.strokeText(t.text, 0, 0);
     ctx.fillStyle = '#ffd700';
     ctx.shadowColor = '#ffd700';
-    ctx.shadowBlur = 10;
-    ctx.font = `bold 18px 'Fredoka One', cursive`;
-    ctx.textAlign = 'center';
-    ctx.fillText(t.text, t.x, t.y);
+    ctx.shadowBlur = 8;
+    ctx.fillText(t.text, 0, 0);
     ctx.restore();
   });
 }
 
+let bgNebulas = [];
+let bgInited = false;
+
+function initBackground() {
+  bgNebulas = [];
+  for (let i = 0; i < 4; i++) {
+    bgNebulas.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 80 + 50,
+      color: ['rgba(168,85,247,', 'rgba(0,212,255,', 'rgba(255,107,214,', 'rgba(255,159,67,'][i % 4],
+      speed: (Math.random() - 0.5) * 0.15
+    });
+  }
+  bgInited = true;
+}
+
 function drawBackground() {
+  if (!bgInited) initBackground();
+
   const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#0d0d35');
-  grad.addColorStop(1, '#12124a');
+  grad.addColorStop(0, '#080820');
+  grad.addColorStop(0.5, '#0d0d35');
+  grad.addColorStop(1, '#0a0a2e');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // Danger zone line
+  bgNebulas.forEach(n => {
+    n.x += n.speed;
+    if (n.x < -n.r) n.x = W + n.r;
+    if (n.x > W + n.r) n.x = -n.r;
+    const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+    g.addColorStop(0, n.color + '0.06)');
+    g.addColorStop(0.5, n.color + '0.03)');
+    g.addColorStop(1, 'transparent');
+    ctx.fillStyle = g;
+    ctx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+  });
+
   ctx.save();
-  ctx.strokeStyle = 'rgba(255,107,107,0.2)';
+  ctx.strokeStyle = 'rgba(255,107,107,0.18)';
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 6]);
   ctx.beginPath();

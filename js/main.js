@@ -2,13 +2,15 @@
 function buildStars() {
   const svg = document.getElementById('stars');
   let html = '';
-  for (let i = 0; i < 120; i++) {
+  const colors = ['white', '#00d4ff', '#ffd700', '#ff6bd6', '#a855f7'];
+  for (let i = 0; i < 160; i++) {
     const x = Math.random() * 100, y = Math.random() * 100;
-    const r = Math.random() * 1.5 + 0.3;
+    const r = Math.random() * 1.8 + 0.2;
     const op = Math.random() * 0.7 + 0.1;
-    const dur = Math.random() * 3 + 1;
-    html += `<circle cx="${x}%" cy="${y}%" r="${r}" fill="white" opacity="${op}">
-      <animate attributeName="opacity" values="${op};${op*0.3};${op}" dur="${dur}s" repeatCount="indefinite"/>
+    const dur = Math.random() * 4 + 1.5;
+    const col = colors[Math.floor(Math.random() * colors.length)];
+    html += `<circle cx="${x}%" cy="${y}%" r="${r}" fill="${col}" opacity="${op}">
+      <animate attributeName="opacity" values="${op};${op*0.2};${op}" dur="${dur}s" repeatCount="indefinite"/>
     </circle>`;
   }
   svg.innerHTML = html;

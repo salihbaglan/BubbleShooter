@@ -84,12 +84,7 @@
   <div id="bottom-area">
     <!-- Bomb button on the left -->
     <button id="bomb-btn" onclick="useBomb()" title="Bomb">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="14" r="8" fill="rgba(255,107,107,0.3)" stroke="white"/>
-        <path d="M12,6 L12,2" stroke="#ffd700" stroke-width="2"/>
-        <path d="M10,3 L14,3" stroke="#ffd700" stroke-width="2"/>
-        <path d="M14,6 L16,4" stroke="rgba(255,160,60,0.8)" stroke-width="1.5"/>
-      </svg>
+      <img src="Bomb.png" width="36" height="36" alt="Bomb">
       <span id="bomb-count" class="bomb-badge">5</span>
     </button>
 
@@ -98,11 +93,9 @@
       <canvas id="next-canvas" width="44" height="44"></canvas>
     </div>
     <button id="swap-btn" onclick="swapBubbles()" title="Swap bubbles">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,3 3,7 7,11"/><path d="M3,7 L21,7"/><polyline points="17,13 21,17 17,21"/><path d="M21,17 L3,17"/></svg>
+      <img src="Change.png" width="34" height="34" alt="Swap">
     </button>
-    <button id="shoot-btn" onclick="shootBubble()">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="white" stroke-width="2.5"><circle cx="14" cy="14" r="10"/><circle cx="14" cy="14" r="4"/><line x1="14" y1="0" x2="14" y2="6"/><line x1="14" y1="22" x2="14" y2="28"/><line x1="0" y1="14" x2="6" y2="14"/><line x1="22" y1="14" x2="28" y2="14"/></svg>
-    </button>
+
   </div>
 </div>
 

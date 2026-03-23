@@ -80,18 +80,22 @@ function placeBubble(x, y, color) {
     bombs--;
     sfxBigPop();
     
-    // Screen shake! 
-    screenShake = 15;
+    screenShake = 22;
 
     const bombPos = bubbleXY(c, r);
     const blastRadius = R * 5;
     let destroyed = 0;
 
-    // Add multiple expanding shockwaves
+    spawnBombParticles(bombPos.x, bombPos.y);
+
+    popAnims.push({ x: bombPos.x, y: bombPos.y, color: '#fff', scale: 0.2, alpha: 1, isBlastRing: true });
     popAnims.push({ x: bombPos.x, y: bombPos.y, color: '#ffeb3b', scale: 0.5, alpha: 1, isBlastRing: true });
     setTimeout(() => {
-      popAnims.push({ x: bombPos.x, y: bombPos.y, color: '#ff5722', scale: 1.5, alpha: 0.8, isBlastRing: true });
-    }, 50);
+      popAnims.push({ x: bombPos.x, y: bombPos.y, color: '#ff5722', scale: 1.0, alpha: 0.9, isBlastRing: true });
+    }, 30);
+    setTimeout(() => {
+      popAnims.push({ x: bombPos.x, y: bombPos.y, color: '#ff6b6b', scale: 2.0, alpha: 0.6, isBlastRing: true });
+    }, 80);
 
     for (let gr = 0; gr < grid.length; gr++) {
       for (let gc = 0; gc < COLS; gc++) {
@@ -99,9 +103,6 @@ function placeBubble(x, y, color) {
         const pos = bubbleXY(gc, gr);
         if (Math.hypot(pos.x - bombPos.x, pos.y - bombPos.y) < blastRadius) {
           popAnims.push({ x: pos.x, y: pos.y, color: grid[gr][gc], scale: 1.4, alpha: 1 });
-          // Explosive particles (yellow/orange/red mix instead of just bubble color)
-          const pColors = ['#ffeb3b', '#ff9800', '#f44336', grid[gr][gc]];
-          spawnParticles(pos.x, pos.y, pColors[Math.floor(Math.random()*pColors.length)]);
           grid[gr][gc] = null;
           destroyed++;
         }
