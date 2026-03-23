@@ -1,8 +1,10 @@
 // ─── INPUT HANDLING ───────────────────────────────────────────
 function getAngleFromEvent(clientX, clientY) {
   const rect = canvas.getBoundingClientRect();
-  const mx = clientX - rect.left;
-  const my = clientY - rect.top;
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const mx = (clientX - rect.left) * scaleX;
+  const my = (clientY - rect.top) * scaleY;
   return Math.atan2(my - shooterY, mx - shooterX);
 }
 

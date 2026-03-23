@@ -25,12 +25,13 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   width: 100%;
+  max-width: 480px;
   height: 100%;
+  height: 100dvh;
+  margin: 0 auto;
   position: relative;
-  padding-top: env(safe-area-inset-top, 0);
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
   overflow: hidden;
 }
 
@@ -49,7 +50,6 @@ html, body {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 420px;
   padding: 6px 12px;
   z-index: 10;
   position: relative;
@@ -92,12 +92,22 @@ html, body {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 0 60px rgba(0,212,255,0.15), 0 0 0 1px rgba(255,255,255,0.08);
-  flex-shrink: 0;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  aspect-ratio: 10 / 16;
+  max-height: 100%;
+  margin: 0 auto;
 }
 
 canvas {
   display: block;
   background: transparent;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 /* Bottom controls */
@@ -109,7 +119,6 @@ canvas {
   padding: 8px;
   z-index: 10;
   width: 100%;
-  max-width: 420px;
   flex-shrink: 0;
 }
 
@@ -327,33 +336,23 @@ canvas {
 
 /* ─── MOBILE RESPONSIVE ──────────────────────────── */
 
-/* Small phones (≤ 360px) */
+/* Small phones */
 @media (max-width: 360px) {
   #hud { padding: 4px 8px; }
   .hud-box { padding: 4px 8px; min-width: 56px; border-radius: 10px; }
   .hud-label { font-size: 8px; }
   .hud-value { font-size: 16px; }
   #bottom-area { gap: 10px; padding: 6px; }
-  #shoot-btn { width: 48px; height: 48px; font-size: 20px; }
+  #bomb-btn, #swap-btn { width: 44px; height: 44px; }
+  #bomb-btn img { width: 28px; height: 28px; }
+  #swap-btn img { width: 28px; height: 28px; }
   #canvas-container { border-radius: 12px; }
 }
 
-/* Short screens (landscape or small height) */
+/* Short screens */
 @media (max-height: 600px) {
   #hud { padding: 2px 8px; }
   .hud-box { padding: 3px 8px; }
   .hud-value { font-size: 16px; }
   #bottom-area { padding: 4px; gap: 12px; }
-  #shoot-btn { width: 44px; height: 44px; font-size: 18px; }
-}
-
-/* Medium phones (361–420px) */
-@media (min-width: 361px) and (max-width: 420px) {
-  .hud-box { min-width: 64px; }
-}
-
-/* Tablets / wider screens */
-@media (min-width: 421px) {
-  #hud { max-width: 440px; }
-  #bottom-area { max-width: 440px; }
 }

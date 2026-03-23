@@ -120,37 +120,28 @@ function drawGrid() {
 function drawPopAnims() {
   popAnims.forEach(p => {
     const animY = p.y + gridAnimOffsetY;
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
     if (p.isBlastRing) {
-      ctx.save();
-      ctx.globalAlpha = p.alpha;
-      ctx.strokeStyle = p.color;
-      ctx.lineWidth = 6 * p.alpha;
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur = 25;
-      ctx.beginPath();
-      ctx.arc(p.x, animY, R * p.scale, 0, Math.PI * 2);
-      ctx.stroke();
-      if (p.alpha > 0.3) {
-        ctx.globalAlpha = p.alpha * 0.3;
-        ctx.lineWidth = 12 * p.alpha;
-        ctx.beginPath();
-        ctx.arc(p.x, animY, R * p.scale * 0.7, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.restore();
-    } else {
-      ctx.save();
-      ctx.globalAlpha = p.alpha;
-      const grad = ctx.createRadialGradient(p.x, animY, 0, p.x, animY, R * p.scale);
-      grad.addColorStop(0, '#fff');
-      grad.addColorStop(0.3, p.color);
+      const grad = ctx.createRadialGradient(p.x, animY, R * p.scale * 0.7, p.x, animY, R * p.scale);
+      grad.addColorStop(0, 'transparent');
+      grad.addColorStop(0.5, p.color);
       grad.addColorStop(1, 'transparent');
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.arc(p.x, animY, R * p.scale * 1.2, 0, Math.PI * 2);
+      ctx.arc(p.x, animY, R * p.scale, 0, Math.PI * 2);
       ctx.fill();
-      ctx.restore();
+    } else {
+      const grad = ctx.createRadialGradient(p.x, animY, 0, p.x, animY, R * p.scale * 1.3);
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(0.4, p.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, animY, R * p.scale * 1.3, 0, Math.PI * 2);
+      ctx.fill();
     }
+    ctx.restore();
   });
 }
 
@@ -258,27 +249,22 @@ function drawParticles() {
   particles.forEach(p => {
     ctx.save();
     ctx.globalAlpha = p.alpha;
-    if (p.type === 'sparkle') {
-      ctx.fillStyle = '#fff';
-      ctx.shadowColor = '#fff';
-      ctx.shadowBlur = 8;
-      const s = p.size;
-      ctx.translate(p.x, p.y);
-      ctx.rotate(Date.now() * 0.005 + p.life);
-      ctx.fillRect(-s/2, -0.5, s, 1);
-      ctx.fillRect(-0.5, -s/2, 1, s);
-    } else if (p.type === 'smoke') {
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
-      grad.addColorStop(0, 'rgba(80,80,80,0.3)');
+    if (p.type === 'ring') {
+      const inner = p.size * 0.6;
+      const grad = ctx.createRadialGradient(p.x, p.y, inner, p.x, p.y, p.size);
+      grad.addColorStop(0, 'transparent');
+      grad.addColorStop(0.4, p.color);
       grad.addColorStop(1, 'transparent');
       ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
     } else {
-      ctx.fillStyle = p.color;
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur = 4;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(0.5, p.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
